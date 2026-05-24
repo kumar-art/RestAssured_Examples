@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -10,20 +11,32 @@
     <artifactId>RestAssured_Maven</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!-- ========================= -->
+    <!-- Properties -->
+    <!-- ========================= -->
+
     <properties>
+
+        <!-- Java -->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Versions -->
+        <!-- Dependency Versions -->
         <cucumber.version>7.15.0</cucumber.version>
         <junit.version>4.13.2</junit.version>
         <restassured.version>5.4.0</restassured.version>
         <allure.adapter.version>2.32.0</allure.adapter.version>
         <allure.plugin.version>2.17.0</allure.plugin.version>
+
     </properties>
 
+    <!-- ========================= -->
+    <!-- Dependencies -->
+    <!-- ========================= -->
+
     <dependencies>
+
         <!-- Cucumber -->
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -31,6 +44,7 @@
             <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
@@ -46,13 +60,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- RestAssured -->
+        <!-- Rest Assured -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${restassured.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-path</artifactId>
@@ -60,7 +75,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Jackson for JSON -->
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -68,57 +83,183 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Allure Cucumber Adapter -->
+        <!-- Allure -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-cucumber7-jvm</artifactId>
             <version>${allure.adapter.version}</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
+    <!-- ========================= -->
+    <!-- Build -->
+    <!-- ========================= -->
+
     <build>
+
         <plugins>
-            <!-- Compiler -->
+
+            <!-- Generate Current IST Time -->
             <plugin>
+
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+
+                <executions>
+
+                    <execution>
+
+                        <id>timestamp-property</id>
+
+                        <phase>validate</phase>
+
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+
+                        <configuration>
+
+                            <name>current.timestamp</name>
+
+                            <pattern>
+                                yyyy-MM-dd_hh-mm-ss-a
+                            </pattern>
+
+                            <timeZone>
+                                Asia/Kolkata
+                            </timeZone>
+
+                        </configuration>
+
+                    </execution>
+
+                </executions>
+
+            </plugin>
+
+            <!-- Maven Compiler Plugin -->
+            <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
+
                 <configuration>
+
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
+
                 </configuration>
+
             </plugin>
 
-            <!-- Surefire -->
+            <!-- Maven Surefire Plugin -->
             <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+
                 <configuration>
-                    <!-- Include your runner class -->
+
+                    <!-- Runner Class -->
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
-                    <!-- Set Allure results directory -->
-                    <systemPropertyVariables>
-                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
-                    </systemPropertyVariables>
-                </configuration>
 
+                    <!-- Allure Results -->
+                    <systemPropertyVariables>
+
+                        <allure.results.directory>
+                            ${project.basedir}/HTMLREPORT/allure-results
+                        </allure.results.directory>
+
+                    </systemPropertyVariables>
+
+                </configuration>
 
             </plugin>
 
-            <!-- Allure Maven plugin -->
+            <!-- Allure Maven Plugin -->
             <plugin>
+
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>${allure.plugin.version}</version>
+
                 <configuration>
-                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
-                    <reportDirectory>${project.build.directory}/allure-report</reportDirectory>
+
+                    <!-- Allure Results -->
+                    <resultsDirectory>
+                        ${project.basedir}/HTMLREPORT/allure-results
+                    </resultsDirectory>
+
+                    <!-- Date & Time Wise Reports -->
+                    <reportDirectory>
+                        ${project.basedir}/HTMLREPORT/allure-report-${current.timestamp}
+                    </reportDirectory>
+
                 </configuration>
+
             </plugin>
+
+            <!-- Auto Generate Allure Report -->
+            <plugin>
+
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+
+                <executions>
+
+                    <execution>
+
+                        <id>generate-allure-report</id>
+
+                        <phase>test</phase>
+
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+
+                            <!-- Allure Executable -->
+                            <executable>
+                                C:\Users\Kumar\scoop\shims\allure.cmd
+                            </executable>
+
+                            <arguments>
+
+                                <argument>generate</argument>
+
+                                <argument>
+                                    ${project.basedir}/HTMLREPORT/allure-results
+                                </argument>
+
+                                <argument>-o</argument>
+
+                                <argument>
+                                    ${project.basedir}/HTMLREPORT/allure-report-${current.timestamp}
+                                </argument>
+
+                                <argument>--clean</argument>
+
+                            </arguments>
+
+                        </configuration>
+
+                    </execution>
+
+                </executions>
+
+            </plugin>
+
         </plugins>
+
     </build>
+
 </project>
