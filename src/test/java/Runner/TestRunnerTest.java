@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
                 "pretty",
                 "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm"
         },
-        tags="@smoke",
+       // tags="@smoke",
 
         monochrome = true
 )

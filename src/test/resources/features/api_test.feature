@@ -9,7 +9,7 @@ Scenario Outline: Verify GET user
     | /users/1     | 200    |
     | /users/2     |200     |
     | /users/3     | 200|
- @smoke
+# @smoke
 Scenario Outline: Create new user
   Given user sets base URI
   When user sends POST request to "<endpoint>"
